@@ -1,0 +1,36 @@
+name: 打包 Windows EXE
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装依赖
+        run: |
+          pip install pyinstaller selenium webdriver-manager
+
+      - name: 打包成 EXE
+        run: |
+          pyinstaller --onefile --console `
+            --name "继续教育自动学习助手" `
+            main.py
+
+      - name: 上传 EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: 继续教育自动学习助手
+          path: dist\继续教育自动学习助手.exe
+          retention-days: 30
